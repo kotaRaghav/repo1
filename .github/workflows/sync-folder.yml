@@ -1,0 +1,38 @@
+name: Sync shared-folder to repo2
+
+on:
+  push:
+    paths:
+      - 'shared-folder/**'
+
+jobs:
+  sync-folder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source repo (repo1)
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Copy folder to temporary location
+        run: |
+          mkdir temp
+          cp -r shared-folder temp/
+
+      - name: Checkout destination repo (repo2)
+        uses: actions/checkout@v3
+        with:
+          repository: <your-username>/repo2
+          token: ${{ secrets.DEST_REPO_TOKEN }}
+          path: repo2
+
+      - name: Sync folder to repo2
+        run: |
+          rm -rf repo2/*
+          cp -r temp/shared-folder/* repo2/
+          cd repo2
+          git config user.name "kotaRaghav"
+          git config user.email "raghavendraasdf@gmail.com"
+          git add .
+          git commit -m "Sync shared-folder from repo1" || echo "No changes to commit"
+          git push

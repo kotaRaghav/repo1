@@ -1,0 +1,2 @@
+Shared file 2 content.
+This file will be synced from repo1 to repo2 using GitHub Actions.
